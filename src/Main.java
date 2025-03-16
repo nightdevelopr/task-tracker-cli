@@ -1,3 +1,5 @@
+import java.util.function.Predicate;
+
 public class Main {
 
     static final String info = """
@@ -77,6 +79,7 @@ public class Main {
     }
 
     public static void handleAddCmd(String[] args) {
+
         System.out.println("Handle Add Command");
     }
 
@@ -97,6 +100,26 @@ public class Main {
     }
 
     public static void handleListCmd(String[] args) {
-        System.out.println("Handle list Command");
+        if (args.length > 2) {
+            System.err.println("Invalid Command. Please check task-cli --help for more info");
+            return;
+        }
+
+        var tasks = TaskManager.getTasks();
+        if (args.length == 1)
+            tasks.forEach(System.out::println);
+        else {
+            var result = switch (args[1]) {
+                case "done" -> tasks.stream().filter(byStatus(Task.StatusEnum.DONE));
+                case "todo" -> tasks.stream().filter(byStatus(Task.StatusEnum.TODO));
+                case "in-progress" -> tasks.stream().filter(byStatus(Task.StatusEnum.IN_PROGRESS));
+                default -> throw new IllegalStateException("Unexpected value: " + args[1]);
+            };
+            result.forEach(System.out::println);
+        }
+    }
+
+    private static Predicate<Task> byStatus(Task.StatusEnum statusEnum) {
+        return task -> task.getStatus().equals(statusEnum);
     }
 }
