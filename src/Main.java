@@ -96,7 +96,13 @@ public class Main {
     }
 
     public static void handleDeleteCmd(String[] args) {
-        System.out.println("Handle Delete Command");
+        if (args.length != 2) {
+            System.err.println(GENERIC_ERROR_MSG);
+            return;
+        }
+
+        int taskId = Integer.parseInt(args[1]);
+        TaskManager.deleteTask(taskId);
     }
 
     public static void handleMarkInProgressCmd(String[] args) {

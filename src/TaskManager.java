@@ -11,7 +11,7 @@ public class TaskManager {
         json = json.trim().substring(1, json.length() - 1);
         if (json.isEmpty()) return tasks;
 
-        String[] jsonObjects = json.split("\\}, \\{");
+        String[] jsonObjects = json.split("}, \\{");
 
         for (int i = 0; i < jsonObjects.length; i++) {
             String jsonObject = jsonObjects[i].trim();
@@ -35,8 +35,10 @@ public class TaskManager {
         JsonHandler.writeToDb(dbName, existingTasks.toString());
     }
 
-    public static void deleteTask(Task task) {
-
+    public static void deleteTask(int taskId) {
+        List<Task> allTasks = getTasks();
+        List<Task> filtered = allTasks.stream().filter(task -> !task.getId().equals(taskId)).toList();
+        JsonHandler.writeToDb(dbName, filtered.toString());
     }
 
     public static void updateTask(int taskId, String description) {
