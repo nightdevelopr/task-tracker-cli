@@ -87,7 +87,12 @@ public class Main {
     }
 
     public static void handleUpdateCmd(String[] args) {
-        System.out.println("Handle Update Command");
+        if (args.length != 3) {
+            System.err.println(GENERIC_ERROR_MSG);
+            return;
+        }
+        int taskId = Integer.parseInt(args[1]);
+        TaskManager.updateTask(taskId, args[2]);
     }
 
     public static void handleDeleteCmd(String[] args) {
@@ -95,7 +100,7 @@ public class Main {
     }
 
     public static void handleMarkInProgressCmd(String[] args) {
-        if (args.length > 2) {
+        if (args.length != 2) {
             System.err.println(GENERIC_ERROR_MSG);
             return;
         }

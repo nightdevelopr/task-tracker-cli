@@ -1,5 +1,3 @@
-import java.time.ZonedDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 public class TaskManager {
@@ -41,8 +39,15 @@ public class TaskManager {
 
     }
 
-    public static void updateTask(Task task) {
-
+    public static void updateTask(int taskId, String description) {
+        List<Task> allTasks = getTasks();
+        Optional<Task> taskToUpdate = allTasks.stream().filter(task -> task.getId().equals(taskId)).findAny();
+        if (taskToUpdate.isPresent()) {
+            taskToUpdate.get().setDescription(description);
+            JsonHandler.writeToDb(dbName, allTasks.toString());
+        } else {
+            System.err.println("No Task with given id: " + taskId + " found!!!");
+        }
     }
 
     public static void updateTaskStatus(int id, String status) {
