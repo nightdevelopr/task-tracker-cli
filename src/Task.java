@@ -41,6 +41,13 @@ public class Task {
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
     }
+    public Task(Integer id, String description) {
+        this.id = id;
+        this.description = description;
+        this.status = StatusEnum.TODO;
+        this.createdAt = ZonedDateTime.now();
+        this.updatedAt = ZonedDateTime.now();
+    }
 
     public Task() {
     }
@@ -77,6 +84,14 @@ public class Task {
         this.createdAt = createdAt;
     }
 
+    public void setCreatedAt(String dateTime) {
+        this.createdAt = ZonedDateTime.parse(dateTime, DateTimeFormatter.ISO_OFFSET_DATE_TIME);
+    }
+
+    public void setUpdatedAt(String dateTime) {
+        this.updatedAt = ZonedDateTime.parse(dateTime, DateTimeFormatter.ISO_OFFSET_DATE_TIME);
+    }
+
     public ZonedDateTime getUpdatedAt() {
         return updatedAt;
     }
@@ -92,15 +107,15 @@ public class Task {
 
     private String toJson() {
         return "{" + System.lineSeparator() +
-                "   id: " + getId() + "," + System.lineSeparator() +
-                "   description: " + getDescription() + "," + System.lineSeparator() +
-                "   status: " + (getStatus()==null ? null : getStatus().getValue()) + "," + System.lineSeparator() +
-                "   createdAt: " + formatDate(getCreatedAt()) + "," + System.lineSeparator() +
-                "   updatedAt: " + formatDate(getUpdatedAt()) + "," + System.lineSeparator() +
+                "   \"id\": " + getId() + "," + System.lineSeparator() +
+                "   \"description\": \"" + getDescription() + "\"," + System.lineSeparator() +
+                "   \"status\": \"" + (getStatus()==null ? null : getStatus().getValue()) + "\"," + System.lineSeparator() +
+                "   \"createdAt\": \"" + formatDate(getCreatedAt()) + "\"," + System.lineSeparator() +
+                "   \"updatedAt\": \"" + formatDate(getUpdatedAt()) + "\"" + System.lineSeparator() +
                 "}";
     }
 
     private String formatDate(ZonedDateTime date) {
-        return date == null ? "null" : date.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss z"));
+        return date == null ? "null" : date.format(DateTimeFormatter.ISO_OFFSET_DATE_TIME);
     }
 }

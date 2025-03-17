@@ -24,12 +24,10 @@ public class JsonHandler {
         return fileContent;
     }
 
-    public static void appendJsonObjectToDb(String dbName, String jsonObject) {
-        String currentContents = getOrCreateJson(dbName);
-        String newContent = currentContents.replace("]", jsonObject).concat("]");
+    public static void writeToDb(String dbName, String data) {
         try {
             Path dbPath = getDbPath(dbName);
-            Files.writeString(dbPath, newContent);
+            Files.writeString(dbPath, data);
         } catch (IOException e) {
             System.err.println("Encountered error while appending Json Object to JsonArray");
         }

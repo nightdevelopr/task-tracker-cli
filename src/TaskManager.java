@@ -1,18 +1,20 @@
 import java.time.ZonedDateTime;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.time.format.DateTimeFormatter;
+import java.util.*;
 
 public class TaskManager {
 
     public static final String dbName = "tasks-db.json";
 
     public static List<Task> getTasks() {
-        String json = JsonHandler.getOrCreateJson(dbName);
-        json = json.trim().substring(1, json.length() - 1);
-        String[] jsonObjects = json.split("\\},\\n  \\{");
         List<Task> tasks = new ArrayList<>();
+        String json = JsonHandler.getOrCreateJson(dbName);
+        if (json.isEmpty()) return tasks;
+        json = json.trim().substring(1, json.length() - 1);
+        if (json.isEmpty()) return tasks;
+
+        String[] jsonObjects = json.split("\\}, \\{");
+
         for (int i = 0; i < jsonObjects.length; i++) {
             String jsonObject = jsonObjects[i].trim();
             if (i == 0) jsonObject = jsonObject.substring(1);   // remove first {
@@ -23,8 +25,16 @@ public class TaskManager {
         return tasks;
     }
 
-    public static void addTask(Task task) {
-        JsonHandler.appendJsonObjectToDb(dbName, task.toString());
+    public static void addTask(String description) {
+        List<Task> existingTasks = getTasks();
+        int newTaskIndex = 1;
+        if (!existingTasks.isEmpty()) {
+            int lastId = existingTasks.stream().max(Comparator.comparingInt(Task::getId)).get().getId();
+            newTaskIndex = lastId + 1;
+        }
+        Task task = new Task(newTaskIndex, description);
+        existingTasks.add(task);
+        JsonHandler.writeToDb(dbName, existingTasks.toString());
     }
 
     public static void deleteTask(Task task) {
@@ -38,7 +48,6 @@ public class TaskManager {
     private static Task fromJsonObject(String obj) {
         return null;
     }
-
 
 
     private static Task fromJson(String jsonObject) {
@@ -56,8 +65,8 @@ public class TaskManager {
         obj.setId(Integer.valueOf(objProps.get("id")));
         obj.setDescription(objProps.get("description"));
         obj.setStatus(Task.StatusEnum.fromValue(objProps.get("status")));
-        obj.setCreatedAt(ZonedDateTime.parse(objProps.get("createdAt")));
-        obj.setUpdatedAt(ZonedDateTime.parse(objProps.get("updatedAt")));
+        obj.setCreatedAt(objProps.get("createdAt"));
+        obj.setUpdatedAt(objProps.get("updatedAt"));
         return obj;
     }
 

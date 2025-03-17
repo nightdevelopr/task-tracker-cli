@@ -2,7 +2,7 @@ import java.util.function.Predicate;
 
 public class Main {
 
-    static final String info = """
+    private static final String info = """
             task-cli [-h | --help] [-v | --version]
                      <command> [<args>]
             
@@ -30,7 +30,7 @@ public class Main {
                task-cli --help
             """;
 
-    static final String helpText = """
+    private static final String helpText = """
             usage: task-cli [-h | --help] [-v | --version]
                             <command> [<args>]
             
@@ -55,12 +55,13 @@ public class Main {
               task-cli help <command>
             """;
 
-    static final String version = "0.0.1";
+    private static final String version = "0.0.1";
+    private static final String GENERIC_ERROR_MSG = "Command not found. Please check task-cli --help for more info";
 
     public static void main(String[] args) {
         if (args.length == 0) System.out.println(info);
         else if (args.length <= 3) handleUserInput(args);
-        else System.err.println("command not found. Please check task-cli --help for more info");
+        else System.err.println(GENERIC_ERROR_MSG);
     }
 
     public static void handleUserInput(String[] args) {
@@ -74,13 +75,15 @@ public class Main {
             case "list" -> handleListCmd(args);
             case "--help", "-h" -> System.out.println(helpText);
             case "--version", "-v" -> System.out.println(version);
-            default -> System.err.println("command not found. Please check task-cli --help for more info");
+            default -> System.err.println(GENERIC_ERROR_MSG);
         }
     }
 
     public static void handleAddCmd(String[] args) {
-
-        System.out.println("Handle Add Command");
+        if (args.length > 2) {
+            System.err.println(GENERIC_ERROR_MSG);
+        }
+        TaskManager.addTask(args[1]);
     }
 
     public static void handleUpdateCmd(String[] args) {
@@ -101,7 +104,7 @@ public class Main {
 
     public static void handleListCmd(String[] args) {
         if (args.length > 2) {
-            System.err.println("Invalid Command. Please check task-cli --help for more info");
+            System.err.println(GENERIC_ERROR_MSG);
             return;
         }
 
@@ -113,7 +116,7 @@ public class Main {
                 case "done" -> tasks.stream().filter(byStatus(Task.StatusEnum.DONE));
                 case "todo" -> tasks.stream().filter(byStatus(Task.StatusEnum.TODO));
                 case "in-progress" -> tasks.stream().filter(byStatus(Task.StatusEnum.IN_PROGRESS));
-                default -> throw new IllegalStateException("Unexpected value: " + args[1]);
+                default -> throw new IllegalStateException(GENERIC_ERROR_MSG);
             };
             result.forEach(System.out::println);
         }
