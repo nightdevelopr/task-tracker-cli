@@ -95,11 +95,21 @@ public class Main {
     }
 
     public static void handleMarkInProgressCmd(String[] args) {
-        System.out.println("Handle mark-in-progress Command");
+        if (args.length > 2) {
+            System.err.println(GENERIC_ERROR_MSG);
+            return;
+        }
+        int id = Integer.parseInt(args[1]);
+        TaskManager.updateTaskStatus(id, "in-progress");
     }
 
     public static void handleMarkDoneCmd(String[] args) {
-        System.out.println("Handle mark-done Command");
+        if (args.length > 2) {
+            System.err.println(GENERIC_ERROR_MSG);
+            return;
+        }
+        int id = Integer.parseInt(args[1]);
+        TaskManager.updateTaskStatus(id, "done");
     }
 
     public static void handleListCmd(String[] args) {

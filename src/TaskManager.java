@@ -45,8 +45,16 @@ public class TaskManager {
 
     }
 
-    private static Task fromJsonObject(String obj) {
-        return null;
+    public static void updateTaskStatus(int id, String status) {
+        List<Task> allTasks = getTasks();
+        Optional<Task> taskWithId = allTasks.stream().filter(task -> task.getId().equals(id)).findAny();
+        if (taskWithId.isPresent()) {
+            taskWithId.get().setStatus(Task.StatusEnum.fromValue(status));
+            JsonHandler.writeToDb(dbName, allTasks.toString());
+        }
+        else {
+            System.err.println("No Task with given id: " + id + " found!!!");
+        }
     }
 
 
